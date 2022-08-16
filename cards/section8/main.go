@@ -21,7 +21,12 @@ func main() {
 	newCards := newDeckFromFile("my_cards")
 	newCards.print()
 
-	// Error Handling
-	newCards1 := newDeckFromFile("my_cards1")
-	newCards1.print()
+	// // Error Handling
+	// newCards1 := newDeckFromFile("my_cards1")
+	// newCards1.print()
+
+	// Shuffe cards
+	fmt.Println("Shuffing cards...")
+	newCards.shuffe()
+	newCards.print()
 }
