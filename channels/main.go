@@ -3,14 +3,17 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
+var links []string
+
 func main() {
-	links := []string{
+	links = []string{
 		"http://google.com",
-		"http://facebook.com",
+		"http://amazon.com",
 		"http://golang.org",
-		"http://stackoverflow.com",
+		"http://instagram.com",
 	}
 
 	c := make(chan string)
@@ -19,21 +22,28 @@ func main() {
 		go checkLink(link, c)
 	}
 
-	// fmt.Println(<-c)
-	for i := 0; i < len(links); i++ {
-		fmt.Println(<-c)
+	// whenever l got value from channel c, it will pass the value to checkLink()
+	for l := range c {
+		go func(link string) {
+			time.Sleep(5 * time.Second)
+			checkLink(link, c)
+		}(l)
 	}
 }
 
 func checkLink(link string, c chan string) {
-	_, err := http.Get(link)
+	resp, err := http.Get(link)
 
 	if err != nil {
-		fmt.Println(link, "is down!")
-		c <- "Might be down!"
+		fmt.Println("Error:", err)
+		fmt.Println("Link maybe down!")
+		c <- link
 		return
 	}
 
-	fmt.Println(link, "is up!")
-	c <- "Yes, It's up!"
+	fmt.Println("Status of", link, "is", resp.Status)
+	fmt.Println("Yes, it's up!")
+	// pass the link to channel
+	c <- link
+
 }
